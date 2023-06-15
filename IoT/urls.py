@@ -20,6 +20,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('greenhouse_api/', include('greenhouse_api.urls')),
     path('accounts_api/', include('accounts_api.urls')),
+    path('accounts/', include('accounts.urls')),
     path('greenhouse/', include("greenhouse.urls")),
-    path('accounts/', include("accounts.urls")),
+    path('', include("greenhouse.urls")),
 ]

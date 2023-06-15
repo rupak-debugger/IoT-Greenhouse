@@ -39,3 +39,29 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
         account.set_password(password)
         account.save()
         return account
+
+
+class AccountRequestSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Account
+        fields = ['email', 'username']
+
+
+class ChangePasswordSerializer(serializers.ModelSerializer):
+    cpassword = serializers.CharField(write_only=True, required=True)
+    cpassword2 = serializers.CharField(write_only=True, required=True)
+
+    class Meta:
+        model = Account
+        fields = ['cpassword', 'cpassword2', ]
+
+    def validate(self, attrs):
+        if attrs['cpassword'] != attrs['cpassword2']:
+            raise serializers.ValidationError(
+                {"password": "Password fields didn't match."})
+        return attrs
+
+    def update(self, instance, validated_data):
+        instance.set_password(validated_data['cpassword'])
+        instance.save()
+        return instance

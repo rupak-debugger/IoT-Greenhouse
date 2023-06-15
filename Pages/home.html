@@ -1,0 +1,297 @@
+{% extends 'index.html' %}
+{% block content %}
+<!-- <script>
+    window.setTimeout(function () {
+        location.href = "/";
+    }, 10000); // refresh/redirect after 10 seconds.~
+</script> -->
+
+<div class="container">
+    <br>
+    <h3 class="text-center " style="color:#546f87;"> <strong>Data</strong> </h3>
+    <hr style="width:95%; margin: auto; height: 2px;" />
+    <br>
+
+    <div class="col-md-12">
+        <div class="row">
+            {% if sdata %}
+            <div class="col-md-6">
+                <div class="card text-center p-3 mt-3" style="background-color: azure;">
+                    <div class="card-title">
+                        <h3 class="text-secondary ">Temperature</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="col-md-12">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <button class="btn" style="color:#42b3c2;">
+                                        <i class="fa-solid fa-4x fa-temperature-high"></i>
+                                    </button>
+                                </div>
+                                <div class="col-md-6">
+                                    <h1 style="color:#42b3c2;"><b style="font-size: 55px;">{{sdata.temperature}}
+                                            <sup>0</sup>C</b></h1>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="card text-center p-3 mt-3" style="background-color: azure;">
+                    <div class="card-title">
+                        <h3 class="text-secondary ">Humidity</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="col-md-12">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <button class="btn" style="color:#42b3c2;">
+                                        <i class="fa-solid fa-droplet fa-4x"></i>
+                                    </button>
+                                </div>
+                                <div class="col-md-6">
+                                    <h1 style="color:#42b3c2;"><b style="font-size: 55px;">{{sdata.humidity}} %</b></h1>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+<br>
+<br>
+<div class="container mb-5" id="ghere">
+    <div class="col-md-12">
+        <br>
+        <h3 class="text-center" style="color:#546f87;"> <strong>Graph</strong></h3>
+        <hr style="width:95%; margin: auto; height: 2px;" />
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card text-center p-3 mb-5 mt-5" style="background-color: azure;">
+                    <div class="card-title">
+                        <h3 class="text-secondary">Temperature</h3>
+                    </div>
+                    <div class="card-body">
+                        <canvas id="temperature-histogram"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-12">
+
+                <div class="card text-center p-3 mb-5 mt-5" style="background-color: azure;">
+                    <div class="card-title">
+                        <h3 class="text-secondary">Humidity</h3>
+                    </div>
+                    <div class="card-body">
+                        <canvas id="humidity-histogram"></canvas>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+<div class="container mt-5">
+    <br>
+    <h3 class="text-center" style="color:#546f87; "> <strong>Control</strong></h3>
+    <hr style="width:85%; margin: auto; height: 2px;" />
+    <br>
+    <br>
+    <div class="row">
+        <div class="col-md-4"></div>
+        <div class="col-md-4 justify-content-around text-center">
+            <div class="card p-3 mb-3" style="background-color: azure;">
+                <div class="card-title">
+                    <h3 class="text-secondary ">Light</h3>
+                </div>
+                <br>
+                {% if bdata.relay1 == True %}
+                <form action="relays" method="post">
+                    {% csrf_token %}
+                    <input type="hidden" value="relay1on" name="relay">
+                    <button type="submit" class="btn btn-info btn-lg rounded-circle border-5 mb-2">
+                        <i class="fa-solid fa-lightbulb fa-4x" style="color: aliceblue;"></i>
+                    </button>
+                    <h5 style="color:#42b3c2;"> <strong>ON</strong></h5>
+                </form>
+
+                {% else %}
+                <form action="relays" method="post">
+                    {% csrf_token %}
+                    <input type="hidden" value="relay1off" name="relay">
+                    <button type="submit" class="btn  btn-lg rounded-circle border-5 mb-2" style="color:#42b3c2;">
+                        <i class="fa-solid fa-lightbulb fa-4x"></i>
+                    </button>
+                    <h5 style="color:#42b3c2;"> <strong>OFF</strong></h5>
+                </form>
+                {%endif%}
+            </div>
+        </div>
+        <div class="col-md-2"></div>
+        <!-- <div class="col-md-4 justify-content-around text-center">
+            <div class="card p-3 mb-3" style="background-color: azure;">
+                <div class="card-title">
+                    <h3 class="text-secondary">Fan</h3>
+                </div>
+                <br>
+                {% if bdata.relay2 == True %}
+                <form action="relays" method="post">
+                    {% csrf_token %}
+                    <input type="hidden" value="relay2on" name="relay">
+                    <button type="submit" class="btn btn-info btn-lg rounded-circle border-5 mb-2">
+                        <i class="fa-solid fa-fan fa-4x" style="color: aliceblue;"></i>
+                    </button>
+                    <h5 style="color:#42b3c2;"> <strong>ON</strong></h5>
+                </form>
+                {% else %}
+                <form action="relays" method="post">
+                    {% csrf_token %}
+                    <input type="hidden" value="relay2off" name="relay">
+                    <button type="submit" class="btn  btn-lg rounded-circle border-5 mb-2" style="color:#42b3c2;">
+                        <i class="fa-solid fa-fan fa-4x"></i>
+                    </button>
+                    <h5 style="color:#42b3c2;"><strong>OFF</strong></h5>
+                </form>
+                {%endif%}
+            </div>
+        </div> -->
+        <div class="col-md-4"></div>
+    </div>
+</div>
+
+<script>
+
+
+
+
+    // Area Chart Example
+    function areaChart(res, id) {
+        var ctx = document.getElementById(id);
+        if (id == 'temperature-histogram') {
+            var label = "Temperature";
+            var req_data = res.temperature;
+        }
+        else {
+            var label = "Humidity";
+            var req_data = res.humidity;
+        }
+        var myLineChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: res.date,
+                datasets: [{
+                    label: label,
+                    lineTension: 0.5,
+                    backgroundColor: "#c1f0f7",
+                    borderColor: "#389ebd",
+                    pointRadius: 3,
+                    pointBackgroundColor: "#389ebd",
+                    pointBorderColor: "#389ebd",
+                    pointHoverRadius: 3,
+                    pointHoverBackgroundColor: "rgba(78, 115, 223, 1)",
+                    pointHoverBorderColor: "rgba(78, 115, 223, 1)",
+                    pointHitRadius: 10,
+                    pointBorderWidth: 2,
+                    data: req_data,
+                }],
+            },
+            options: {
+                maintainAspectRatio: false,
+                layout: {
+                    padding: {
+                        left: 10,
+                        right: 25,
+                        top: 25,
+                        bottom: 0
+                    }
+                },
+                scales: {
+                    xAxes: [{
+                        time: {
+                            unit: 'date'
+                        },
+                        gridLines: {
+                            display: false,
+                            drawBorder: false
+                        },
+                        ticks: {
+                            maxTicksLimit: 7
+                        }
+                    }],
+                    yAxes: [{
+                        ticks: {
+                            maxTicksLimit: 5,
+                            padding: 10,
+                            callback: function (value, index, values) {
+                                return '' + value;
+                            }
+                        },
+                        gridLines: {
+                            color: "rgb(234, 236, 244)",
+                            zeroLineColor: "rgb(234, 236, 244)",
+                            drawBorder: false,
+                            borderDash: [2],
+                            zeroLineBorderDash: [2]
+                        }
+                    }],
+                },
+                legend: {
+                    display: false
+                },
+                tooltips: {
+                    backgroundColor: "rgb(255,255,255)",
+                    bodyFontColor: "#858796",
+                    titleMarginBottom: 10,
+                    titleFontColor: '#209f85',
+                    titleFontSize: 14,
+                    borderColor: '#dddfeb',
+                    borderWidth: 1,
+                    xPadding: 15,
+                    yPadding: 15,
+                    displayColors: false,
+                    intersect: false,
+                    mode: 'index',
+                    caretPadding: 10,
+                    callbacks: {
+                        label: function (tooltipItem, chart) {
+                            var datasetLabel = chart.datasets[tooltipItem.datasetIndex].label || '';
+                            return datasetLabel + ':' + tooltipItem.yLabel.toFixed(2);
+                        }
+                    }
+                }
+            }
+        });
+    }
+    $(document).ready(function () {
+        $.ajax({
+            url: "histogram",
+            type: "GET",
+            success: function (res) {
+                console.log(res);
+                areaChart(res, 'temperature-histogram');
+
+            }
+        });
+
+        $.ajax({
+            url: "histogram",
+            type: "GET",
+            success: function (res) {
+                console.log(res);
+                areaChart(res, 'humidity-histogram');
+
+            }
+        });
+
+
+
+
+    });
+</script>
+{% endblock %}
